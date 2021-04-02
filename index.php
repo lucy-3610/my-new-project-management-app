@@ -97,17 +97,34 @@
                 $projectNameErrors = $dateErrors = "";
 
                 // connect to database
-                $dbuser = 'lucyswett';
-                $dbpass = 'myPostgresPassword!!';
-                $host = '127.0.0.1';
-                $dbname = 'lucyswett';
+                // $dbuser = 'lucyswett';
+                // $dbpass = 'myPostgresPassword!!';
+                // $host = '127.0.0.1';
+                // $dbname = 'lucyswett';
 
-                $db = pg_connect("host=127.0.0.1 port=5432 dbname=lucyswett user=lucyswett password=myPostgresPassword!!");
-                
+                // $db = pg_connect("host=127.0.0.1 port=5432 dbname=lucyswett user=lucyswett password=myPostgresPassword!!");
+
                 // $projectsdb = new PDO("pgsql:host=$host;dbname=$dbname", $dbuser, $dbpass);
+
+                // $db = (function(){
+                //     $parts = (parse_url(getenv('DATABASE_URL') ?: 'postgresql://username:password@localhost:5432/your_database_name_here'));
+                //     extract($parts);
+                //     $path = ltrim($path, "/");
+                //     return new PDO("pgsql:host={$host};port={$port};dbname={$path}", $user, $pass);
+                // })();
+
+                $db       = parse_url(getenv('DATABASE_URL'));
+                $driver   = $db['scheme'];
+                $host     = $db['host'];
+                $database = substr($db['path'], 1);
+                $username = $db['user'];
+                $password = $db['pass'];
 
                 // $projectsdb = parse_url(getenv("DATABASE_URL"));
                 // $projectsdb["path"] = ltrim($projectsdb["path"], "/");
+                // echo "projectsdb: " . $projectsdb["path"];
+
+                $conn = pg_connect(getenv("DATABASE_URL"));
 
                 // $conn = pg_connect("host=localhost");
                 // $result = pg_query($conn, "SELECT datname FROM pg_database");
@@ -148,7 +165,7 @@
                         $description = isset($_POST['description']) ? $_POST['description'] : '';
                         echo "Description: " . $description;
 
-                        $projectsQuery = "INSERT INTO lucyswett.projects VALUES (projectmame, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
+                        $projectsQuery = "INSERT INTO $host.projects VALUES (projectmame, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
                         $result = pg_query($projectsQuery);
                         //$projectssql = "INSERT INTO projects.projects (projectName, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
                         echo "Query: " . $projectsQuery;
@@ -228,7 +245,7 @@
 
                     $j = 1;
                     while ($projectsRow = pg_fetch_array($projects)) {
-                    //while ($projectsRow = mysqli_fetch_array($projects)) {
+                        //while ($projectsRow = mysqli_fetch_array($projects)) {
 
                         $dueDate =  strtotime($projectsRow['date']);
                         $today = strtotime((new DateTime())->format('Y-m-d'));
