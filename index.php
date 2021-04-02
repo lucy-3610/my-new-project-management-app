@@ -52,42 +52,42 @@
                 // echo "You are reading php";
 
                 // connect to database
-                $tasksdb = mysqli_connect("127.0.0.1", "designer2", "PleaseDoNotStealMyPassword!!", "todo");
+                // $tasksdb = mysqli_connect("127.0.0.1", "designer2", "PleaseDoNotStealMyPassword!!", "todo");
 
-                if ($tasksdb->connect_errno) {
-                    echo "Connect failed";
-                    printf("Connect failed: %s\n", $mysqli->connect_error);
-                    exit();
-                }
+                // if ($tasksdb->connect_errno) {
+                //     echo "Connect failed";
+                //     printf("Connect failed: %s\n", $mysqli->connect_error);
+                //     exit();
+                // }
 
-                if (!$tasksdb) {
-                    echo "No tasksdb";
-                    die("Connection failed: " . mysqli_connect_error());
-                }
+                // if (!$tasksdb) {
+                //     echo "No tasksdb";
+                //     die("Connection failed: " . mysqli_connect_error());
+                // }
 
-                // insert a quote if submit button is clicked
-                if (isset($_POST['submit'])) {
-                    echo "you submitted a task";
-                    if (empty($_POST['task'])) {
-                        $taskErrors = "You must fill in the task";
-                    } else {
-                        echo "else";
-                        $task = isset($_POST['task']) ? $_POST['task'] : '';
-                        echo $task;
-                        $taskssql = "INSERT INTO tasks (task) VALUES ('$task')";
-                        echo "SQL: " . $taskssql;
+                // // insert a quote if submit button is clicked
+                // if (isset($_POST['submit'])) {
+                //     echo "you submitted a task";
+                //     if (empty($_POST['task'])) {
+                //         $taskErrors = "You must fill in the task";
+                //     } else {
+                //         echo "else";
+                //         $task = isset($_POST['task']) ? $_POST['task'] : '';
+                //         echo $task;
+                //         $taskssql = "INSERT INTO tasks (task) VALUES ('$task')";
+                //         echo "SQL: " . $taskssql;
 
-                        mysqli_query($tasksdb, $taskssql);
-                        // header('location: index.php');
-                    }
-                }
+                //         mysqli_query($tasksdb, $taskssql);
+                //         // header('location: index.php');
+                //     }
+                // }
 
-                if (isset($_GET['del_task'])) {
-                    $id = $_GET['del_task'];
+                // if (isset($_GET['del_task'])) {
+                //     $id = $_GET['del_task'];
 
-                    mysqli_query($tasksDB, "DELETE FROM todo.tasks WHERE id=" . $id);
-                    header('location: index.php');
-                }
+                //     mysqli_query($tasksDB, "DELETE FROM todo.tasks WHERE id=" . $id);
+                //     header('location: index.php');
+                // }
 
                 // mysqli_close($db);
                 ?>
@@ -97,7 +97,23 @@
                 $projectNameErrors = $dateErrors = "";
 
                 // connect to database
-                $projectsdb = mysqli_connect("127.0.0.1", "designer2", "PleaseDoNotStealMyPassword!!", "projects");
+                $dbuser = 'lucyswett';
+                $dbpass = 'myPostgresPassword!!';
+                $host = '127.0.0.1';
+                $dbname = 'lucyswett';
+
+                $db = pg_connect("host=127.0.0.1 port=5432 dbname=lucyswett user=lucyswett password=myPostgresPassword!!");
+                
+                // $projectsdb = new PDO("pgsql:host=$host;dbname=$dbname", $dbuser, $dbpass);
+
+                // $projectsdb = parse_url(getenv("DATABASE_URL"));
+                // $projectsdb["path"] = ltrim($projectsdb["path"], "/");
+
+                // $conn = pg_connect("host=localhost");
+                // $result = pg_query($conn, "SELECT datname FROM pg_database");
+                // while ($row = pg_fetch_row($result)) {
+                //     echo "<p>" . htmlspecialchars($row[0]) . "</p>\n";
+                // $projectsdb = mysqli_connect("127.0.0.1", "designer2", "PleaseDoNotStealMyPassword!!", "projects");
 
                 // insert a quote if submit button is clicked
                 if (isset($_POST['projects_submit'])) {
@@ -132,9 +148,11 @@
                         $description = isset($_POST['description']) ? $_POST['description'] : '';
                         echo "Description: " . $description;
 
-                        $projectssql = "INSERT INTO projects.projects (projectName, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
-                        echo "SQL: " . $projectssql;
-                        mysqli_query($projectsdb, $projectssql);
+                        $projectsQuery = "INSERT INTO lucyswett.projects VALUES (projectmame, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
+                        $result = pg_query($projectsQuery);
+                        //$projectssql = "INSERT INTO projects.projects (projectName, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
+                        echo "Query: " . $projectsQuery;
+                        // mysqli_query($projectsdb, $projectssql);
                         header('location: index.php');
                     }
                 }
@@ -205,10 +223,12 @@
                 <div class="project-boxes jsListView">
                     <?php
                     // select all projects if page is visited or refreshed
-                    $projects = mysqli_query($projectsdb, "SELECT * FROM projects ORDER BY date ASC");
+                    $projects = pg_query("SELECT * FROM projects ORDER BY date ASC");
+                    //$projects = mysqli_query($projectsdb, "SELECT * FROM projects ORDER BY date ASC");
 
                     $j = 1;
-                    while ($projectsRow = mysqli_fetch_array($projects)) {
+                    while ($projectsRow = pg_fetch_array($projects)) {
+                    //while ($projectsRow = mysqli_fetch_array($projects)) {
 
                         $dueDate =  strtotime($projectsRow['date']);
                         $today = strtotime((new DateTime())->format('Y-m-d'));
@@ -246,7 +266,7 @@
 
                                 </div>
                                 <div class="project-box-content-header">
-                                    <p class="box-content-header"><?php echo $projectsRow['projectName']; ?></p>
+                                    <p class="box-content-header"><?php echo $projectsRow['projectname']; ?></p>
                                     <p class="box-content-subheader"><?php echo $projectsRow['description']; ?></p>
                                 </div>
 
