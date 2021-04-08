@@ -112,24 +112,36 @@
                 //     $path = ltrim($path, "/");
                 //     return new PDO("pgsql:host={$host};port={$port};dbname={$path}", $user, $pass);
                 // })();
-
-                $db       = parse_url(getenv('DATABASE_URL'));
-                $driver   = $db['scheme'];
-                $host     = $db['host'];
-                $database = substr($db['path'], 1);
-                $username = $db['user'];
-                $password = $db['pass'];
+                mysql://b5a255fd2c0205:77f9d461@us-cdbr-east-03.cleardb.com/heroku_6f0ec5af5a7849e?reconnect=true
+                // $db       = parse_url(getenv('postgres://bjjuhdpoahxqlt:2b976c80486ddf4e050488e7789a31894c647a3cd2729e63e7d6640f4aac59bb@ec2-3-91-127-228.compute-1.amazonaws.com:5432/dditvfuno4j5u5'));
+                
+                //Get Heroku ClearDB connection information
+                $cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+                $cleardb_server = $cleardb_url["host"];
+                echo "ClearDB server: " . $cleardb_server;
+                $cleardb_username = $cleardb_url["user"];
+                echo "ClearDB username: " . $cleardb_username;
+                $cleardb_password = $cleardb_url["pass"];
+                echo "ClearDB password: " . $cleardb_password;
+                $cleardb_db = substr($cleardb_url["path"], 1);
+                echo "ClearDB db: " . $cleardb_db;
+                $active_group = 'default';
+                $query_builder = TRUE;
+                // Connect to DB
+                // host, username, password, database
+                $conn = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
 
                 // $projectsdb = parse_url(getenv("DATABASE_URL"));
                 // $projectsdb["path"] = ltrim($projectsdb["path"], "/");
                 // echo "projectsdb: " . $projectsdb["path"];
 
-                $conn = pg_connect(getenv("DATABASE_URL"));
+                //$conn = pg_connect(getenv("DATABASE_URL"));
 
                 // $conn = pg_connect("host=localhost");
                 // $result = pg_query($conn, "SELECT datname FROM pg_database");
                 // while ($row = pg_fetch_row($result)) {
                 //     echo "<p>" . htmlspecialchars($row[0]) . "</p>\n";
+                // host, username, password, database
                 // $projectsdb = mysqli_connect("127.0.0.1", "designer2", "PleaseDoNotStealMyPassword!!", "projects");
 
                 // insert a quote if submit button is clicked
@@ -165,11 +177,12 @@
                         $description = isset($_POST['description']) ? $_POST['description'] : '';
                         echo "Description: " . $description;
 
-                        $projectsQuery = "INSERT INTO $host.projects VALUES (projectmame, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
-                        $result = pg_query($projectsQuery);
+                        $projectsQuery = "INSERT INTO heroku_6f0ec5af5a7849e.projects VALUES (projectmame, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
+                        //$result = pg_query($projectsQuery);
                         //$projectssql = "INSERT INTO projects.projects (projectName, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
-                        echo "Query: " . $projectsQuery;
-                        // mysqli_query($projectsdb, $projectssql);
+                        //echo "Query: " . $projectsQuery;
+                        //postgres://bjjuhdpoahxqlt:2b976c80486ddf4e050488e7789a31894c647a3cd2729e63e7d6640f4aac59bb@ec2-3-91-127-228.compute-1.amazonaws.com:5432/dditvfuno4j5u5
+                        $conn->query($projectsQuery);
                         header('location: index.php');
                     }
                 }
@@ -177,7 +190,7 @@
                 if (isset($_GET['del_project'])) {
                     $id = $_GET['del_project'];
 
-                    mysqli_query($projectsdb, "DELETE FROM projects.projects WHERE id=" . $id);
+                    $conn->query("DELETE FROM projects.projects WHERE id=" . $id);
                     header('location: index.php');
                 }
 
@@ -240,12 +253,12 @@
                 <div class="project-boxes jsListView">
                     <?php
                     // select all projects if page is visited or refreshed
-                    $projects = pg_query("SELECT * FROM projects ORDER BY date ASC");
-                    //$projects = mysqli_query($projectsdb, "SELECT * FROM projects ORDER BY date ASC");
+                    //$projects = pg_query("SELECT * FROM projects ORDER BY date ASC");
+                    $projects = mysqli_select_db($conn, "SELECT * FROM projects ORDER BY date ASC");
 
                     $j = 1;
-                    while ($projectsRow = pg_fetch_array($projects)) {
-                        //while ($projectsRow = mysqli_fetch_array($projects)) {
+                    //while ($projectsRow = pg_fetch_array($projects)) {
+                    while ($projectsRow = mysqli_fetch_array($projects)) {
 
                         $dueDate =  strtotime($projectsRow['date']);
                         $today = strtotime((new DateTime())->format('Y-m-d'));
