@@ -127,10 +127,11 @@
                 echo "ClearDB db: " . $cleardb_db;
                 $active_group = 'default';
                 $query_builder = TRUE;
+
                 // Connect to DB
                 // host, username, password, database
                 $conn = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
-
+                //$cleardb_db = 'heroku_6f0ec5af5a7849e';
                 //$conn = mysqli_connect('us-cdbr-east-03.cleardb.com', 'b5a255fd2c0205', '77f9d461', 'heroku_6f0ec5af5a7849e');
 
                 // $projectsdb = parse_url(getenv("DATABASE_URL"));
@@ -186,18 +187,24 @@
                         $parts = explode('/', $date);
                         $yyyy_mm_dd = $parts[2] . '-' . $parts[0] . '-' . $parts[1];
                         echo "yyyy_mm_dd: " . $yyyy_mm_dd;
-                        $daysLeft = $date - (new DateTime())->format('Y-m-d');
+                        $daysLeft = date("d", strtotime($date) - (new DateTime())->format('Y-m-d'));
+                        //$daysLeft = $date - (new DateTime())->format('Y-m-d');
                         echo "days left: " . $daysLeft;
                         $description = isset($_POST['description']) ? $_POST['description'] : '';
                         echo "Description: " . $description;
 
-                        $projectsQuery = "INSERT INTO $cleardb_db.projects VALUES (projectName, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
+                        $projectsQuery = "INSERT INTO $cleardb_db.projects (`id`, `projectName`, `date`, `mmddyyyy`, `description`) VALUES (NULL, '$projectName', '$yyyy_mm_dd', '$date', '$description')";
                         //$result = pg_query($projectsQuery);
                         //$projectssql = "INSERT INTO projects.projects (projectName, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
                         //echo "Query: " . $projectsQuery;
                         //postgres://bjjuhdpoahxqlt:2b976c80486ddf4e050488e7789a31894c647a3cd2729e63e7d6640f4aac59bb@ec2-3-91-127-228.compute-1.amazonaws.com:5432/dditvfuno4j5u5
-                        mysqli_query($conn, $projectsQuery);
-                        header('location: index.php');
+                        if (mysqli_query($conn, $projectsQuery)) {
+                            echo "New record created successfully";
+                          } else {
+                            echo "Error: " . $projectsQuery . "<br>" . mysqli_error($conn);
+                          }
+                        //mysqli_query($conn, $projectsQuery);
+                        //header('location: index.php');
                     }
                 }
 
@@ -279,7 +286,7 @@
                         $secs = $dueDate - $today;
                         $daysLeft = 1 + $secs / 86400;
 
-                        mysqli_close($conn);
+                        //mysqli_close($conn);
                     ?>
 
                         <div class="project-box-wrapper">
