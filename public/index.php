@@ -114,25 +114,25 @@
                 // })();
                 //mysql://b5a255fd2c0205:77f9d461@us-cdbr-east-03.cleardb.com/heroku_6f0ec5af5a7849e?reconnect=true
                 // $db       = parse_url(getenv('postgres://bjjuhdpoahxqlt:2b976c80486ddf4e050488e7789a31894c647a3cd2729e63e7d6640f4aac59bb@ec2-3-91-127-228.compute-1.amazonaws.com:5432/dditvfuno4j5u5'));
-                
+
                 //Get Heroku ClearDB connection information
-                $cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
-                $cleardb_server = $cleardb_url["host"];
-                echo "ClearDB server: " . $cleardb_server;
-                $cleardb_username = $cleardb_url["user"];
-                echo "ClearDB username: " . $cleardb_username;
-                $cleardb_password = $cleardb_url["pass"];
-                echo "ClearDB password: " . $cleardb_password;
-                $cleardb_db = substr($cleardb_url["path"], 1);
-                echo "ClearDB db: " . $cleardb_db;
-                $active_group = 'default';
-                $query_builder = TRUE;
+                // $cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+                // $cleardb_server = $cleardb_url["host"];
+                // // echo "ClearDB server: " . $cleardb_server;
+                // $cleardb_username = $cleardb_url["user"];
+                // // echo "ClearDB username: " . $cleardb_username;
+                // $cleardb_password = $cleardb_url["pass"];
+                // // echo "ClearDB password: " . $cleardb_password;
+                // $cleardb_db = substr($cleardb_url["path"], 1);
+                // // echo "ClearDB db: " . $cleardb_db;
+                // $active_group = 'default';
+                // $query_builder = TRUE;
 
                 // Connect to DB
                 // host, username, password, database
-                $conn = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
-                //$cleardb_db = 'heroku_6f0ec5af5a7849e';
-                //$conn = mysqli_connect('us-cdbr-east-03.cleardb.com', 'b5a255fd2c0205', '77f9d461', 'heroku_6f0ec5af5a7849e');
+                // $conn = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
+                $cleardb_db = 'heroku_6f0ec5af5a7849e';
+                $conn = mysqli_connect('us-cdbr-east-03.cleardb.com', 'b5a255fd2c0205', '77f9d461', 'heroku_6f0ec5af5a7849e');
 
                 // $projectsdb = parse_url(getenv("DATABASE_URL"));
                 // $projectsdb["path"] = ltrim($projectsdb["path"], "/");
@@ -145,11 +145,11 @@
                 // if ($pg_conn) {
 
                 //     echo 'Connection attempt succeeded.';
-                    
+
                 //     } else {
-                    
+
                 //     echo 'Connection attempt failed.';
-                    
+
                 //     }
 
                 //$conn = pg_connect("host=ec2-3-91-127-228.compute-1.amazonaws.com");
@@ -160,8 +160,9 @@
                 // $projectsdb = mysqli_connect("127.0.0.1", "designer2", "PleaseDoNotStealMyPassword!!", "projects");
 
                 // insert a quote if submit button is clicked
+                if(!empty($_POST)) {
                 if (isset($_POST['projects_submit'])) {
-                    echo "You submitted a project";
+                    //echo "You submitted a project";
                     function console_log($data)
                     {
                         echo '<script>';
@@ -181,17 +182,17 @@
                         }
                     } else {
                         $projectName = isset($_POST['projectName']) ? $_POST['projectName'] : '';
-                        echo "Project Name: " . $projectName;
+                        //echo "Project Name: " . $projectName;
                         $date = isset($_POST['date']) ? $_POST['date'] : '';
-                        echo "Date: " . $date;
+                        //echo "Date: " . $date;
                         $parts = explode('/', $date);
                         $yyyy_mm_dd = $parts[2] . '-' . $parts[0] . '-' . $parts[1];
-                        echo "yyyy_mm_dd: " . $yyyy_mm_dd;
+                        //echo "yyyy_mm_dd: " . $yyyy_mm_dd;
                         $daysLeft = date("d", strtotime($date) - (new DateTime())->format('Y-m-d'));
                         //$daysLeft = $date - (new DateTime())->format('Y-m-d');
-                        echo "days left: " . $daysLeft;
+                        //echo "days left: " . $daysLeft;
                         $description = isset($_POST['description']) ? $_POST['description'] : '';
-                        echo "Description: " . $description;
+                        //echo "Description: " . $description;
 
                         $projectsQuery = "INSERT INTO $cleardb_db.projects (`id`, `projectName`, `date`, `mmddyyyy`, `description`) VALUES (NULL, '$projectName', '$yyyy_mm_dd', '$date', '$description')";
                         //$result = pg_query($projectsQuery);
@@ -199,14 +200,15 @@
                         //echo "Query: " . $projectsQuery;
                         //postgres://bjjuhdpoahxqlt:2b976c80486ddf4e050488e7789a31894c647a3cd2729e63e7d6640f4aac59bb@ec2-3-91-127-228.compute-1.amazonaws.com:5432/dditvfuno4j5u5
                         if (mysqli_query($conn, $projectsQuery)) {
-                            echo "New record created successfully";
-                          } else {
+                            //echo "New record created successfully";
+                        } else {
                             echo "Error: " . $projectsQuery . "<br>" . mysqli_error($conn);
-                          }
+                        }
                         //mysqli_query($conn, $projectsQuery);
                         //header('location: index.php');
                     }
                 }
+            }
 
                 if (isset($_GET['del_project'])) {
                     $id = $_GET['del_project'];
@@ -215,7 +217,7 @@
                     header('location: index.php');
                 }
 
-                
+
                 ?>
 
                 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
@@ -249,20 +251,20 @@
                     <div class="view-actions">
                         <button class="view-btn list-view active" title="List View">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list">
-                                <line x1="8" y1="6" x2="21" y2="6" />
-                                <line x1="8" y1="12" x2="21" y2="12" />
-                                <line x1="8" y1="18" x2="21" y2="18" />
-                                <line x1="3" y1="6" x2="3.01" y2="6" />
-                                <line x1="3" y1="12" x2="3.01" y2="12" />
-                                <line x1="3" y1="18" x2="3.01" y2="18" />
+                            <line x1="8" y1="6" x2="21" y2="6" />
+                            <line x1="8" y1="12" x2="21" y2="12" />
+                            <line x1="8" y1="18" x2="21" y2="18" />
+                            <line x1="3" y1="6" x2="3.01" y2="6" />
+                            <line x1="3" y1="12" x2="3.01" y2="12" />
+                            <line x1="3" y1="18" x2="3.01" y2="18" />
                             </svg>
                         </button>
                         <button class="view-btn grid-view" title="Grid View">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid">
-                                <rect x="3" y="3" width="7" height="7" />
-                                <rect x="14" y="3" width="7" height="7" />
-                                <rect x="14" y="14" width="7" height="7" />
-                                <rect x="3" y="14" width="7" height="7" />
+                            <rect x="3" y="3" width="7" height="7" />
+                            <rect x="14" y="3" width="7" height="7" />
+                            <rect x="14" y="14" width="7" height="7" />
+                            <rect x="3" y="14" width="7" height="7" />
                             </svg>
                         </button>
                     </div>
@@ -296,7 +298,9 @@
                                                         echo " future-status-box";
                                                     } else if ($daysLeft <= 14 && $daysLeft > 7) {
                                                         echo " soon-status-box";
-                                                    } else {
+                                                    } else if ($daysLeft < 0) {
+                                                        echo " past-status-box";
+                                                    }else {
                                                         echo " urgent-status-box";
                                                     }
                                                     ?>">
@@ -307,11 +311,12 @@
                                     <div class="more-wrapper">
                                         <button class="project-btn-more">
                                             <a href="index.php?del_project=<?php echo $projectsRow['id'] ?>">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical">
+                                            <span class="close">&times;</span>
+                                                <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical">
                                                     <circle cx="12" cy="12" r="1" />
                                                     <circle cx="12" cy="5" r="1" />
                                                     <circle cx="12" cy="19" r="1" />
-                                                </svg>
+                                                </svg> -->
                                             </a>
                                         </button>
                                     </div>
@@ -330,13 +335,17 @@
                             echo " future-status-color";
                         } else if ($daysLeft <= 14 && $daysLeft > 7) {
                             echo " soon-status-color";
+                        } else if ($daysLeft < 0) {
+                            echo " past-status-color";
                         } else {
                             echo " urgent-status-color";
                         }
                     ?>
                   ">
                                         <?php
-                                        if ($daysLeft == 1) {
+                                        if ($daysLeft < 0) {
+                                            echo ltrim($daysLeft, '-0') . " Days Ago";
+                                        } else if ($daysLeft == 1) {
                                             echo $daysLeft . " Day Left";
                                         } else {
                                             echo $daysLeft . " Days Left";

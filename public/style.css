@@ -577,7 +577,7 @@ input[type="text"], textarea {
 }
 
 .project-box {
-  --main-color-card: #dbf6fd;
+  /* --main-color-card: #dbf6fd; */
   border-radius: 30px;
   padding: 16px;
   background-color: var(--main-color-card);
@@ -595,6 +595,10 @@ input[type="text"], textarea {
   --main-color-card: #ffd3e2;
 }
 
+.past-status-box {
+  --main-color-card: #e9e7fd;
+}
+
 .future-status-color {
   color: #34c471;
 }
@@ -605,6 +609,10 @@ input[type="text"], textarea {
 
 .urgent-status-color {
   color: #df3670;
+}
+
+.past-status-color {
+  color: #4f3ff0;
 }
 
 .project-box-header {
