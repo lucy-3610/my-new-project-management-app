@@ -112,32 +112,44 @@
                 //     $path = ltrim($path, "/");
                 //     return new PDO("pgsql:host={$host};port={$port};dbname={$path}", $user, $pass);
                 // })();
-                mysql://b5a255fd2c0205:77f9d461@us-cdbr-east-03.cleardb.com/heroku_6f0ec5af5a7849e?reconnect=true
+                //mysql://b5a255fd2c0205:77f9d461@us-cdbr-east-03.cleardb.com/heroku_6f0ec5af5a7849e?reconnect=true
                 // $db       = parse_url(getenv('postgres://bjjuhdpoahxqlt:2b976c80486ddf4e050488e7789a31894c647a3cd2729e63e7d6640f4aac59bb@ec2-3-91-127-228.compute-1.amazonaws.com:5432/dditvfuno4j5u5'));
                 
                 //Get Heroku ClearDB connection information
-                $cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
-                $cleardb_server = $cleardb_url["host"];
-                echo "ClearDB server: " . $cleardb_server;
-                $cleardb_username = $cleardb_url["user"];
-                echo "ClearDB username: " . $cleardb_username;
-                $cleardb_password = $cleardb_url["pass"];
-                echo "ClearDB password: " . $cleardb_password;
-                $cleardb_db = substr($cleardb_url["path"], 1);
-                echo "ClearDB db: " . $cleardb_db;
-                $active_group = 'default';
-                $query_builder = TRUE;
+                // $cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+                // $cleardb_server = $cleardb_url["host"];
+                // echo "ClearDB server: " . $cleardb_server;
+                // $cleardb_username = $cleardb_url["user"];
+                // echo "ClearDB username: " . $cleardb_username;
+                // $cleardb_password = $cleardb_url["pass"];
+                // echo "ClearDB password: " . $cleardb_password;
+                // $cleardb_db = substr($cleardb_url["path"], 1);
+                // echo "ClearDB db: " . $cleardb_db;
+                // $active_group = 'default';
+                // $query_builder = TRUE;
                 // Connect to DB
                 // host, username, password, database
-                $conn = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
+                //$conn = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
+
+                $conn = mysqli_connect('us-cdbr-east-03.cleardb.com', 'b5a255fd2c0205', '77f9d461', 'heroku_6f0ec5af5a7849e');
 
                 // $projectsdb = parse_url(getenv("DATABASE_URL"));
                 // $projectsdb["path"] = ltrim($projectsdb["path"], "/");
                 // echo "projectsdb: " . $projectsdb["path"];
 
-                //$conn = pg_connect(getenv("DATABASE_URL"));
+                // $pg_conn = pg_connect(getenv("HEROKU_DATABASE_URL"));
 
-                // $conn = pg_connect("host=localhost");
+                // if ($pg_conn) {
+
+                //     echo 'Connection attempt succeeded.';
+                    
+                //     } else {
+                    
+                //     echo 'Connection attempt failed.';
+                    
+                //     }
+
+                //$conn = pg_connect("host=ec2-3-91-127-228.compute-1.amazonaws.com");
                 // $result = pg_query($conn, "SELECT datname FROM pg_database");
                 // while ($row = pg_fetch_row($result)) {
                 //     echo "<p>" . htmlspecialchars($row[0]) . "</p>\n";
@@ -177,12 +189,12 @@
                         $description = isset($_POST['description']) ? $_POST['description'] : '';
                         echo "Description: " . $description;
 
-                        $projectsQuery = "INSERT INTO heroku_6f0ec5af5a7849e.projects VALUES (projectmame, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
+                        $projectsQuery = "INSERT INTO heroku_6f0ec5af5a7849e.projects VALUES (projectName, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
                         //$result = pg_query($projectsQuery);
                         //$projectssql = "INSERT INTO projects.projects (projectName, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
                         //echo "Query: " . $projectsQuery;
                         //postgres://bjjuhdpoahxqlt:2b976c80486ddf4e050488e7789a31894c647a3cd2729e63e7d6640f4aac59bb@ec2-3-91-127-228.compute-1.amazonaws.com:5432/dditvfuno4j5u5
-                        $conn->query($projectsQuery);
+                        mysqli_query($conn, $projectsQuery);
                         header('location: index.php');
                     }
                 }
@@ -190,11 +202,11 @@
                 if (isset($_GET['del_project'])) {
                     $id = $_GET['del_project'];
 
-                    $conn->query("DELETE FROM projects.projects WHERE id=" . $id);
+                    mysqli_query($conn, "DELETE FROM heroku_6f0ec5af5a7849e.projects WHERE id=" . $id);
                     header('location: index.php');
                 }
 
-                // mysqli_close($db);
+                
                 ?>
 
                 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
@@ -254,7 +266,7 @@
                     <?php
                     // select all projects if page is visited or refreshed
                     //$projects = pg_query("SELECT * FROM projects ORDER BY date ASC");
-                    $projects = mysqli_select_db($conn, "SELECT * FROM projects ORDER BY date ASC");
+                    $projects = mysqli_query($conn, "SELECT * FROM heroku_6f0ec5af5a7849e.projects ORDER BY date ASC");
 
                     $j = 1;
                     //while ($projectsRow = pg_fetch_array($projects)) {
@@ -264,6 +276,8 @@
                         $today = strtotime((new DateTime())->format('Y-m-d'));
                         $secs = $dueDate - $today;
                         $daysLeft = 1 + $secs / 86400;
+
+                        mysqli_close($conn);
                     ?>
 
                         <div class="project-box-wrapper">
@@ -296,7 +310,7 @@
 
                                 </div>
                                 <div class="project-box-content-header">
-                                    <p class="box-content-header"><?php echo $projectsRow['projectname']; ?></p>
+                                    <p class="box-content-header"><?php echo $projectsRow['projectName']; ?></p>
                                     <p class="box-content-subheader"><?php echo $projectsRow['description']; ?></p>
                                 </div>
 
