@@ -131,23 +131,25 @@
                 // host, username, password, database
                 //$conn = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
 
-                $conn = mysqli_connect('us-cdbr-east-03.cleardb.com', 'b5a255fd2c0205', '77f9d461', 'heroku_6f0ec5af5a7849e');
+                //$conn = mysqli_connect('us-cdbr-east-03.cleardb.com', 'b5a255fd2c0205', '77f9d461', 'heroku_6f0ec5af5a7849e');
 
                 // $projectsdb = parse_url(getenv("DATABASE_URL"));
                 // $projectsdb["path"] = ltrim($projectsdb["path"], "/");
                 // echo "projectsdb: " . $projectsdb["path"];
 
-                // $pg_conn = pg_connect(getenv("HEROKU_DATABASE_URL"));
+                $pg_conn = pg_connect(getenv("HEROKU_DATABASE_URL"));
 
-                // if ($pg_conn) {
+                $pg_db = 'dditvfuno4j5u5';
 
-                //     echo 'Connection attempt succeeded.';
+                if ($pg_conn) {
+
+                    echo 'Connection attempt succeeded.';
                     
-                //     } else {
+                    } else {
                     
-                //     echo 'Connection attempt failed.';
+                    echo 'Connection attempt failed.';
                     
-                //     }
+                    }
 
                 //$conn = pg_connect("host=ec2-3-91-127-228.compute-1.amazonaws.com");
                 // $result = pg_query($conn, "SELECT datname FROM pg_database");
@@ -189,12 +191,12 @@
                         $description = isset($_POST['description']) ? $_POST['description'] : '';
                         echo "Description: " . $description;
 
-                        $projectsQuery = "INSERT INTO heroku_6f0ec5af5a7849e.projects VALUES (projectName, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
-                        //$result = pg_query($projectsQuery);
+                        $projectsQuery = "INSERT INTO $pg_db.projects VALUES (projectName, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
+                        $result = pg_query($projectsQuery);
                         //$projectssql = "INSERT INTO projects.projects (projectName, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
                         //echo "Query: " . $projectsQuery;
                         //postgres://bjjuhdpoahxqlt:2b976c80486ddf4e050488e7789a31894c647a3cd2729e63e7d6640f4aac59bb@ec2-3-91-127-228.compute-1.amazonaws.com:5432/dditvfuno4j5u5
-                        mysqli_query($conn, $projectsQuery);
+                        //mysqli_query($conn, $projectsQuery);
                         header('location: index.php');
                     }
                 }
@@ -202,7 +204,7 @@
                 if (isset($_GET['del_project'])) {
                     $id = $_GET['del_project'];
 
-                    mysqli_query($conn, "DELETE FROM heroku_6f0ec5af5a7849e.projects WHERE id=" . $id);
+                    pg_query($conn, "DELETE FROM $pg_db.projects WHERE id=" . $id);
                     header('location: index.php');
                 }
 
@@ -266,11 +268,11 @@
                     <?php
                     // select all projects if page is visited or refreshed
                     //$projects = pg_query("SELECT * FROM projects ORDER BY date ASC");
-                    $projects = mysqli_query($conn, "SELECT * FROM heroku_6f0ec5af5a7849e.projects ORDER BY date ASC");
+                    $projects = pg_query($pg_conn, "SELECT * FROM $pg_db.projects ORDER BY date ASC");
 
                     $j = 1;
-                    //while ($projectsRow = pg_fetch_array($projects)) {
-                    while ($projectsRow = mysqli_fetch_array($projects)) {
+                    while ($projectsRow = pg_fetch_array($projects)) {
+                    //while ($projectsRow = mysqli_fetch_array($projects)) {
 
                         $dueDate =  strtotime($projectsRow['date']);
                         $today = strtotime((new DateTime())->format('Y-m-d'));
