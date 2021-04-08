@@ -116,20 +116,20 @@
                 // $db       = parse_url(getenv('postgres://bjjuhdpoahxqlt:2b976c80486ddf4e050488e7789a31894c647a3cd2729e63e7d6640f4aac59bb@ec2-3-91-127-228.compute-1.amazonaws.com:5432/dditvfuno4j5u5'));
                 
                 //Get Heroku ClearDB connection information
-                // $cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
-                // $cleardb_server = $cleardb_url["host"];
-                // echo "ClearDB server: " . $cleardb_server;
-                // $cleardb_username = $cleardb_url["user"];
-                // echo "ClearDB username: " . $cleardb_username;
-                // $cleardb_password = $cleardb_url["pass"];
-                // echo "ClearDB password: " . $cleardb_password;
-                // $cleardb_db = substr($cleardb_url["path"], 1);
-                // echo "ClearDB db: " . $cleardb_db;
-                // $active_group = 'default';
-                // $query_builder = TRUE;
+                $cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+                $cleardb_server = $cleardb_url["host"];
+                echo "ClearDB server: " . $cleardb_server;
+                $cleardb_username = $cleardb_url["user"];
+                echo "ClearDB username: " . $cleardb_username;
+                $cleardb_password = $cleardb_url["pass"];
+                echo "ClearDB password: " . $cleardb_password;
+                $cleardb_db = substr($cleardb_url["path"], 1);
+                echo "ClearDB db: " . $cleardb_db;
+                $active_group = 'default';
+                $query_builder = TRUE;
                 // Connect to DB
                 // host, username, password, database
-                //$conn = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
+                $conn = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
 
                 //$conn = mysqli_connect('us-cdbr-east-03.cleardb.com', 'b5a255fd2c0205', '77f9d461', 'heroku_6f0ec5af5a7849e');
 
@@ -137,19 +137,19 @@
                 // $projectsdb["path"] = ltrim($projectsdb["path"], "/");
                 // echo "projectsdb: " . $projectsdb["path"];
 
-                $pg_conn = pg_connect(getenv("HEROKU_DATABASE_URL"));
+                // $pg_conn = pg_connect(getenv("HEROKU_DATABASE_URL"));
 
-                $pg_db = 'dditvfuno4j5u5';
+                // $pg_db = 'dditvfuno4j5u5';
 
-                if ($pg_conn) {
+                // if ($pg_conn) {
 
-                    echo 'Connection attempt succeeded.';
+                //     echo 'Connection attempt succeeded.';
                     
-                    } else {
+                //     } else {
                     
-                    echo 'Connection attempt failed.';
+                //     echo 'Connection attempt failed.';
                     
-                    }
+                //     }
 
                 //$conn = pg_connect("host=ec2-3-91-127-228.compute-1.amazonaws.com");
                 // $result = pg_query($conn, "SELECT datname FROM pg_database");
@@ -191,12 +191,12 @@
                         $description = isset($_POST['description']) ? $_POST['description'] : '';
                         echo "Description: " . $description;
 
-                        $projectsQuery = "INSERT INTO $pg_db.projects VALUES (projectName, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
-                        $result = pg_query($projectsQuery);
+                        $projectsQuery = "INSERT INTO $cleardb_db.projects VALUES (projectName, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
+                        //$result = pg_query($projectsQuery);
                         //$projectssql = "INSERT INTO projects.projects (projectName, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
                         //echo "Query: " . $projectsQuery;
                         //postgres://bjjuhdpoahxqlt:2b976c80486ddf4e050488e7789a31894c647a3cd2729e63e7d6640f4aac59bb@ec2-3-91-127-228.compute-1.amazonaws.com:5432/dditvfuno4j5u5
-                        //mysqli_query($conn, $projectsQuery);
+                        mysqli_query($conn, $projectsQuery);
                         header('location: index.php');
                     }
                 }
@@ -204,7 +204,7 @@
                 if (isset($_GET['del_project'])) {
                     $id = $_GET['del_project'];
 
-                    pg_query($conn, "DELETE FROM $pg_db.projects WHERE id=" . $id);
+                    mysqli_query($conn, "DELETE FROM $cleardb_db.projects WHERE id=" . $id);
                     header('location: index.php');
                 }
 
@@ -240,7 +240,7 @@
                 <div class="projects-section-header">
                     <p>Projects</p>
                     <div class="view-actions">
-                        <button class="view-btn list-view" title="List View">
+                        <button class="view-btn list-view active" title="List View">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list">
                                 <line x1="8" y1="6" x2="21" y2="6" />
                                 <line x1="8" y1="12" x2="21" y2="12" />
@@ -250,7 +250,7 @@
                                 <line x1="3" y1="18" x2="3.01" y2="18" />
                             </svg>
                         </button>
-                        <button class="view-btn grid-view active" title="Grid View">
+                        <button class="view-btn grid-view" title="Grid View">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid">
                                 <rect x="3" y="3" width="7" height="7" />
                                 <rect x="14" y="3" width="7" height="7" />
@@ -268,11 +268,11 @@
                     <?php
                     // select all projects if page is visited or refreshed
                     //$projects = pg_query("SELECT * FROM projects ORDER BY date ASC");
-                    $projects = pg_query($pg_conn, "SELECT * FROM $pg_db.projects ORDER BY date ASC");
+                    $projects = mysqli_query($conn, "SELECT * FROM $cleardb_db.projects ORDER BY date ASC");
 
                     $j = 1;
-                    while ($projectsRow = pg_fetch_array($projects)) {
-                    //while ($projectsRow = mysqli_fetch_array($projects)) {
+                    //while ($projectsRow = pg_fetch_array($projects)) {
+                    while ($projectsRow = mysqli_fetch_array($projects)) {
 
                         $dueDate =  strtotime($projectsRow['date']);
                         $today = strtotime((new DateTime())->format('Y-m-d'));
