@@ -116,23 +116,24 @@
                 // $db       = parse_url(getenv('postgres://bjjuhdpoahxqlt:2b976c80486ddf4e050488e7789a31894c647a3cd2729e63e7d6640f4aac59bb@ec2-3-91-127-228.compute-1.amazonaws.com:5432/dditvfuno4j5u5'));
 
                 //Get Heroku ClearDB connection information
-                // $cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
-                // $cleardb_server = $cleardb_url["host"];
-                // // echo "ClearDB server: " . $cleardb_server;
-                // $cleardb_username = $cleardb_url["user"];
-                // // echo "ClearDB username: " . $cleardb_username;
-                // $cleardb_password = $cleardb_url["pass"];
-                // // echo "ClearDB password: " . $cleardb_password;
-                // $cleardb_db = substr($cleardb_url["path"], 1);
-                // // echo "ClearDB db: " . $cleardb_db;
-                // $active_group = 'default';
-                // $query_builder = TRUE;
+                $cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+                $cleardb_server = $cleardb_url["host"];
+                // echo "ClearDB server: " . $cleardb_server;
+                $cleardb_username = $cleardb_url["user"];
+                // echo "ClearDB username: " . $cleardb_username;
+                $cleardb_password = $cleardb_url["pass"];
+                // echo "ClearDB password: " . $cleardb_password;
+                $cleardb_db = substr($cleardb_url["path"], 1);
+                // echo "ClearDB db: " . $cleardb_db;
+                $active_group = 'default';
+                $query_builder = TRUE;
 
                 // Connect to DB
                 // host, username, password, database
-                // $conn = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
-                $cleardb_db = 'heroku_6f0ec5af5a7849e';
-                $conn = mysqli_connect('us-cdbr-east-03.cleardb.com', 'b5a255fd2c0205', '77f9d461', 'heroku_6f0ec5af5a7849e');
+                $conn = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
+                
+                //$cleardb_db = 'heroku_6f0ec5af5a7849e';
+                //$conn = mysqli_connect('us-cdbr-east-03.cleardb.com', 'b5a255fd2c0205', '77f9d461', 'heroku_6f0ec5af5a7849e');
 
                 // $projectsdb = parse_url(getenv("DATABASE_URL"));
                 // $projectsdb["path"] = ltrim($projectsdb["path"], "/");
