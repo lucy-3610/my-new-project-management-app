@@ -47,169 +47,47 @@
                 <span class="close">&times;</span>
                 <?php
                 // initialize errors variable
-                $taskErrors = "";
-
-                // echo "You are reading php";
-
-                // connect to database
-                // $tasksdb = mysqli_connect("127.0.0.1", "designer2", "PleaseDoNotStealMyPassword!!", "todo");
-
-                // if ($tasksdb->connect_errno) {
-                //     echo "Connect failed";
-                //     printf("Connect failed: %s\n", $mysqli->connect_error);
-                //     exit();
-                // }
-
-                // if (!$tasksdb) {
-                //     echo "No tasksdb";
-                //     die("Connection failed: " . mysqli_connect_error());
-                // }
-
-                // // insert a quote if submit button is clicked
-                // if (isset($_POST['submit'])) {
-                //     echo "you submitted a task";
-                //     if (empty($_POST['task'])) {
-                //         $taskErrors = "You must fill in the task";
-                //     } else {
-                //         echo "else";
-                //         $task = isset($_POST['task']) ? $_POST['task'] : '';
-                //         echo $task;
-                //         $taskssql = "INSERT INTO tasks (task) VALUES ('$task')";
-                //         echo "SQL: " . $taskssql;
-
-                //         mysqli_query($tasksdb, $taskssql);
-                //         // header('location: index.php');
-                //     }
-                // }
-
-                // if (isset($_GET['del_task'])) {
-                //     $id = $_GET['del_task'];
-
-                //     mysqli_query($tasksDB, "DELETE FROM todo.tasks WHERE id=" . $id);
-                //     header('location: index.php');
-                // }
-
-                // mysqli_close($db);
-                ?>
-
-                <?php
-                // initialize errors variable
                 $projectNameErrors = $dateErrors = "";
 
-                // connect to database
-                // $dbuser = 'lucyswett';
-                // $dbpass = 'myPostgresPassword!!';
-                // $host = '127.0.0.1';
-                // $dbname = 'lucyswett';
-
-                // $db = pg_connect("host=127.0.0.1 port=5432 dbname=lucyswett user=lucyswett password=myPostgresPassword!!");
-
-                // $projectsdb = new PDO("pgsql:host=$host;dbname=$dbname", $dbuser, $dbpass);
-
-                // $db = (function(){
-                //     $parts = (parse_url(getenv('DATABASE_URL') ?: 'postgresql://username:password@localhost:5432/your_database_name_here'));
-                //     extract($parts);
-                //     $path = ltrim($path, "/");
-                //     return new PDO("pgsql:host={$host};port={$port};dbname={$path}", $user, $pass);
-                // })();
-                //mysql://b5a255fd2c0205:77f9d461@us-cdbr-east-03.cleardb.com/heroku_6f0ec5af5a7849e?reconnect=true
-                // $db       = parse_url(getenv('postgres://bjjuhdpoahxqlt:2b976c80486ddf4e050488e7789a31894c647a3cd2729e63e7d6640f4aac59bb@ec2-3-91-127-228.compute-1.amazonaws.com:5432/dditvfuno4j5u5'));
-
-                //Get Heroku ClearDB connection information
-                $cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
-                $cleardb_server = $cleardb_url["host"];
-                // echo "ClearDB server: " . $cleardb_server;
-                $cleardb_username = $cleardb_url["user"];
-                // echo "ClearDB username: " . $cleardb_username;
-                $cleardb_password = $cleardb_url["pass"];
-                // echo "ClearDB password: " . $cleardb_password;
-                $cleardb_db = substr($cleardb_url["path"], 1);
-                // echo "ClearDB db: " . $cleardb_db;
-                $active_group = 'default';
-                $query_builder = TRUE;
-
-                // Connect to DB
-                // host, username, password, database
-                $conn = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
-                
-                //$cleardb_db = 'heroku_6f0ec5af5a7849e';
-                //$conn = mysqli_connect('us-cdbr-east-03.cleardb.com', 'b5a255fd2c0205', '77f9d461', 'heroku_6f0ec5af5a7849e');
-
-                // $projectsdb = parse_url(getenv("DATABASE_URL"));
-                // $projectsdb["path"] = ltrim($projectsdb["path"], "/");
-                // echo "projectsdb: " . $projectsdb["path"];
-
-                // $pg_conn = pg_connect(getenv("HEROKU_DATABASE_URL"));
-
-                // $pg_db = 'dditvfuno4j5u5';
-
-                // if ($pg_conn) {
-
-                //     echo 'Connection attempt succeeded.';
-
-                //     } else {
-
-                //     echo 'Connection attempt failed.';
-
-                //     }
-
-                //$conn = pg_connect("host=ec2-3-91-127-228.compute-1.amazonaws.com");
-                // $result = pg_query($conn, "SELECT datname FROM pg_database");
-                // while ($row = pg_fetch_row($result)) {
-                //     echo "<p>" . htmlspecialchars($row[0]) . "</p>\n";
-                // host, username, password, database
-                // $projectsdb = mysqli_connect("127.0.0.1", "designer2", "PleaseDoNotStealMyPassword!!", "projects");
+                $cleardb_db = 'projects';
+                $conn = mysqli_connect('127.0.0.1', 'lucyswett', 'PleaseDoNotStealMyPassword!!', 'projects');
 
                 // insert a quote if submit button is clicked
-                if(!empty($_POST)) {
-                if (isset($_POST['projects_submit'])) {
-                    //echo "You submitted a project";
-                    function console_log($data)
-                    {
-                        echo '<script>';
-                        echo 'console.log(' . json_encode($data) . ')';
-                        echo '</script>';
-                    }
-                    console_log("You submitted a project");
-                    if (empty($_POST['projectName']) || empty($_POST['date'])) {
-                        if (empty($_POST['projectName'])) {
-                            $projectNameErrors = "You must fill in the project name";
-                            echo $projectNameErrors;
+                if (!empty($_POST)) {
+                    if (isset($_POST['projects_submit'])) {
+                        function console_log($data)
+                        {
+                            echo '<script>';
+                            echo 'console.log(' . json_encode($data) . ')';
+                            echo '</script>';
                         }
+                        console_log("You submitted a project");
+                        if (empty($_POST['projectName']) || empty($_POST['date'])) {
+                            if (empty($_POST['projectName'])) {
+                                $projectNameErrors = "You must fill in the project name";
+                                echo $projectNameErrors;
+                            }
 
-                        if (empty($_POST['date'])) {
-                            $dateErrors = "Your must fill in the date";
-                            echo $dateErrors;
-                        }
-                    } else {
-                        $projectName = isset($_POST['projectName']) ? $_POST['projectName'] : '';
-                        //echo "Project Name: " . $projectName;
-                        $date = isset($_POST['date']) ? $_POST['date'] : '';
-                        //echo "Date: " . $date;
-                        $parts = explode('/', $date);
-                        $yyyy_mm_dd = $parts[2] . '-' . $parts[0] . '-' . $parts[1];
-                        //echo "yyyy_mm_dd: " . $yyyy_mm_dd;
-                        $daysLeft = date("d", strtotime($date) - (new DateTime())->format('Y-m-d'));
-                        //$daysLeft = $date - (new DateTime())->format('Y-m-d');
-                        //echo "days left: " . $daysLeft;
-                        $description = isset($_POST['description']) ? $_POST['description'] : '';
-                        //echo "Description: " . $description;
-
-                        $projectsQuery = "INSERT INTO $cleardb_db.projects (`id`, `projectName`, `date`, `mmddyyyy`, `description`) VALUES (NULL, '$projectName', '$yyyy_mm_dd', '$date', '$description')";
-                        //$result = pg_query($projectsQuery);
-                        //$projectssql = "INSERT INTO projects.projects (projectName, date, mmddyyyy, description) VALUES ('$projectName', '$yyyy_mm_dd', '$date', '$description')";
-                        //echo "Query: " . $projectsQuery;
-                        //postgres://bjjuhdpoahxqlt:2b976c80486ddf4e050488e7789a31894c647a3cd2729e63e7d6640f4aac59bb@ec2-3-91-127-228.compute-1.amazonaws.com:5432/dditvfuno4j5u5
-                        if (mysqli_query($conn, $projectsQuery)) {
-                            //echo "New record created successfully";
+                            if (empty($_POST['date'])) {
+                                $dateErrors = "Your must fill in the date";
+                                echo $dateErrors;
+                            }
                         } else {
-                            echo "Error: " . $projectsQuery . "<br>" . mysqli_error($conn);
+                            $projectName = isset($_POST['projectName']) ? $_POST['projectName'] : '';
+                            $date = isset($_POST['date']) ? $_POST['date'] : '';
+                            $parts = explode('/', $date);
+                            $yyyy_mm_dd = $parts[2] . '-' . $parts[0] . '-' . $parts[1];
+                            $daysLeft = date("d", strtotime($date) - (new DateTime())->format('Y-m-d'));
+                            $description = isset($_POST['description']) ? $_POST['description'] : '';
+
+                            $projectsQuery = "INSERT INTO $cleardb_db.projects (`id`, `projectName`, `date`, `mmddyyyy`, `description`) VALUES (NULL, '$projectName', '$yyyy_mm_dd', '$date', '$description')";
+                            if (mysqli_query($conn, $projectsQuery)) {
+                            } else {
+                                echo "Error: " . $projectsQuery . "<br>" . mysqli_error($conn);
+                            }
                         }
-                        //mysqli_query($conn, $projectsQuery);
-                        //header('location: index.php');
                     }
                 }
-            }
 
                 if (isset($_GET['del_project'])) {
                     $id = $_GET['del_project'];
@@ -217,8 +95,6 @@
                     mysqli_query($conn, "DELETE FROM $cleardb_db.projects WHERE id=" . $id);
                     header('location: index.php');
                 }
-
-
                 ?>
 
                 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
@@ -241,55 +117,47 @@
                     <input type="submit" name="projects_submit" value="Submit">
                 </form>
             </div>
-
         </div>
 
         <div class="app-content">
-
             <div class="projects-section">
                 <div class="projects-section-header">
                     <p>Projects</p>
                     <div class="view-actions">
                         <button class="view-btn list-view active" title="List View">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list">
-                            <line x1="8" y1="6" x2="21" y2="6" />
-                            <line x1="8" y1="12" x2="21" y2="12" />
-                            <line x1="8" y1="18" x2="21" y2="18" />
-                            <line x1="3" y1="6" x2="3.01" y2="6" />
-                            <line x1="3" y1="12" x2="3.01" y2="12" />
-                            <line x1="3" y1="18" x2="3.01" y2="18" />
+                                <line x1="8" y1="6" x2="21" y2="6" />
+                                <line x1="8" y1="12" x2="21" y2="12" />
+                                <line x1="8" y1="18" x2="21" y2="18" />
+                                <line x1="3" y1="6" x2="3.01" y2="6" />
+                                <line x1="3" y1="12" x2="3.01" y2="12" />
+                                <line x1="3" y1="18" x2="3.01" y2="18" />
                             </svg>
                         </button>
                         <button class="view-btn grid-view" title="Grid View">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid">
-                            <rect x="3" y="3" width="7" height="7" />
-                            <rect x="14" y="3" width="7" height="7" />
-                            <rect x="14" y="14" width="7" height="7" />
-                            <rect x="3" y="14" width="7" height="7" />
+                                <rect x="3" y="3" width="7" height="7" />
+                                <rect x="14" y="3" width="7" height="7" />
+                                <rect x="14" y="14" width="7" height="7" />
+                                <rect x="3" y="14" width="7" height="7" />
                             </svg>
                         </button>
                     </div>
                 </div>
-                <div class="projects-section-line">
 
-                </div>
+                <div class="projects-section-line"></div>
 
                 <div class="project-boxes jsListView">
                     <?php
-                    // select all projects if page is visited or refreshed
-                    //$projects = pg_query("SELECT * FROM projects ORDER BY date ASC");
                     $projects = mysqli_query($conn, "SELECT * FROM $cleardb_db.projects ORDER BY date ASC");
 
                     $j = 1;
-                    //while ($projectsRow = pg_fetch_array($projects)) {
                     while ($projectsRow = mysqli_fetch_array($projects)) {
 
                         $dueDate =  strtotime($projectsRow['date']);
                         $today = strtotime((new DateTime())->format('Y-m-d'));
                         $secs = $dueDate - $today;
                         $daysLeft = 1 + $secs / 86400;
-
-                        //mysqli_close($conn);
                     ?>
 
                         <div class="project-box-wrapper">
@@ -301,34 +169,25 @@
                                                         echo " soon-status-box";
                                                     } else if ($daysLeft < 0) {
                                                         echo " past-status-box";
-                                                    }else {
+                                                    } else {
                                                         echo " urgent-status-box";
                                                     }
                                                     ?>">
-
 
                                 <div class="project-box-header">
                                     <span><?php echo $projectsRow['mmddyyyy']; ?></span>
                                     <div class="more-wrapper">
                                         <button class="project-btn-more">
                                             <a href="index.php?del_project=<?php echo $projectsRow['id'] ?>">
-                                            <span class="close">&times;</span>
-                                                <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical">
-                                                    <circle cx="12" cy="12" r="1" />
-                                                    <circle cx="12" cy="5" r="1" />
-                                                    <circle cx="12" cy="19" r="1" />
-                                                </svg> -->
+                                                <span class="close">&times;</span>
                                             </a>
                                         </button>
                                     </div>
-
-
                                 </div>
                                 <div class="project-box-content-header">
                                     <p class="box-content-header"><?php echo $projectsRow['projectName']; ?></p>
                                     <p class="box-content-subheader"><?php echo $projectsRow['description']; ?></p>
                                 </div>
-
                                 <div class="project-box-footer">
                                     <div class="days-left
                   <?php
